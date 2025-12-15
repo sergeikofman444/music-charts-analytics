@@ -1,5 +1,11 @@
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
+This project performs analytics on current and historical music charts. The current version pulls from a PostgreSQL db containing track, artist, and chart data, and displays data about the release date and age of songs in the chart as well as the average age of a given week's chart. 
+
+
+https://github.com/user-attachments/assets/6bbddc17-40e6-4d09-9eba-59efd4b2e01b
+
+
 ## Getting Started
 
 First, run the development server:
