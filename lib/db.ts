@@ -1,4 +1,5 @@
 import { Pool } from "pg";
+import { chartAge } from "./utils"
 
 export const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
@@ -29,7 +30,8 @@ interface ChartEntry {
   track_isrc: string;
   track_name: string;
   album: string;
-  release_date: Date; // pg will return a Date object here
+  release_date: Date;
+  track_age_days: number;
   all_artist_names: string;
 }
 
@@ -52,6 +54,7 @@ export async function getChartByDate(chartDate: string): Promise<ChartEntry[]> {
         t.name AS track_name,
         t.album,
         t.release_date,
+        GREATEST(0, ce.chart_instance_id::date - t.release_date::date) AS track_age_days,
         COALESCE(ta.all_artist_names, 'Unknown Artist(s)') AS all_artist_names
     FROM
         chart_entries ce
@@ -65,9 +68,7 @@ export async function getChartByDate(chartDate: string): Promise<ChartEntry[]> {
         ce.position ASC;
   `;
 
-  // The 'pg' library safely handles the parameter, $1, preventing SQL injection
   const result = await pool.query(query, [chartDate]);
-
   return result.rows as ChartEntry[];
 }
 
@@ -77,7 +78,29 @@ export async function getChartDates() {
       ci.date
     FROM
       chart_instance ci
+    ORDER BY
+      ci.date DESC
     `);
 
   return result.rows;
+}
+
+export async function getAverageAgePerChart(): Promise<chartAge[]> {
+  const query = `
+    SELECT
+        to_char(ce.chart_instance_id::date, 'Mon DD, YYYY') AS chart_date,
+        ROUND(AVG(ce.chart_instance_id::date - t.release_date::date), 2) AS avg_age
+    FROM
+        chart_entries ce
+    JOIN
+        tracks t ON ce.track_isrc = t.id
+    GROUP BY
+        ce.chart_instance_id
+    ORDER BY
+        ce.chart_instance_id ASC;
+  `;
+
+  const result = await pool.query(query);
+
+  return result.rows as chartAge[];
 }

@@ -21,3 +21,9 @@ export const dateOptions: Intl.DateTimeFormatOptions = {
   month: "long",
   day: "numeric",
 };
+
+export type chartAge = {
+    chart_date: string,
+    avg_age: number,
+}
+

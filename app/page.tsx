@@ -1,7 +1,8 @@
 import { getTopPlaylist } from "./api/spotify/playlist/route";
-import { getChartByDate, getChartDates } from "@/lib/db";
+import { getChartByDate, getChartDates, getAverageAgePerChart } from "@/lib/db";
 import { calculateTrackAge, dateOptions } from "@/lib/utils";
 import ChartMenu from "./components/ChartMenu";
+import TimeAgeTimeSeries from "./components/TrackAgeTimeSeries"
 
 export default async function Home({
   searchParams,
@@ -19,8 +20,7 @@ export default async function Home({
   ) as number[];
 
   const averageTrackAgeInDays = averageTrackAge(trackAges);
-
-  console.log(averageTrackAgeInDays);
+  const averageAgesOverTime = await getAverageAgePerChart();
 
   const selectedDateAsDate = new Date(`${selectedDate}T12:00:00`);
   const readableDate = selectedDateAsDate.toLocaleDateString(
@@ -30,6 +30,8 @@ export default async function Home({
 
   return (
     <main style={{ padding: "20px" }}>
+      <div className="flex justify-center">Average track age per chart instance</div>
+      <TimeAgeTimeSeries chartAges={averageAgesOverTime}/>
       <div className="flex flex-col items-end">
         <div>
           <ChartMenu chartDates={chartDates} />
@@ -43,12 +45,10 @@ export default async function Home({
         <div>
           <ul>
             {chartData.map((song) => {
-              const trackAge = calculateTrackAge(song.release_date);
-
               return (
                 <li key={song.position}>
                   {song.track_name} - {song.all_artist_names},{" "}
-                  {trackAge.toString()}
+                  {song.track_age_days}
                 </li>
               );
             })}
