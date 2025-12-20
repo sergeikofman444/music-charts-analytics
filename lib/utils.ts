@@ -24,6 +24,18 @@ export const dateOptions: Intl.DateTimeFormatOptions = {
 
 export type chartAge = {
     chart_date: string,
-    avg_age: number,
+    age: number,
+}
+
+export type numberOfSongs = {
+  chart_date: string,
+  one_yr: number,
+  two_yr: number,
+  three_yr: number,
+}
+
+export type percentageOfSongs = {
+  chart_date: string,
+  percentage: number,
 }
 

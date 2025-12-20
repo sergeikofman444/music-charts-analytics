@@ -1,5 +1,5 @@
 import { Pool } from "pg";
-import { chartAge } from "./utils"
+import { chartAge, numberOfSongs, percentageOfSongs } from "./utils"
 
 export const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
@@ -89,7 +89,7 @@ export async function getAverageAgePerChart(): Promise<chartAge[]> {
   const query = `
     SELECT
         to_char(ce.chart_instance_id::date, 'Mon DD, YYYY') AS chart_date,
-        ROUND(AVG(ce.chart_instance_id::date - t.release_date::date), 2) AS avg_age
+        ROUND(AVG(ce.chart_instance_id::date - t.release_date::date), 2) AS age
     FROM
         chart_entries ce
     JOIN
@@ -103,4 +103,73 @@ export async function getAverageAgePerChart(): Promise<chartAge[]> {
   const result = await pool.query(query);
 
   return result.rows as chartAge[];
+}
+
+export async function getMedianAgePerChart(): Promise<chartAge[]> {
+  const query = `
+    SELECT
+        to_char(ce.chart_instance_id::date, 'Mon DD, YYYY') AS chart_date,
+        ROUND(
+            PERCENTILE_CONT(0.5) WITHIN GROUP (ORDER BY (ce.chart_instance_id::date - t.release_date::date))::numeric, 
+            2
+        )::float AS age
+    FROM
+        chart_entries ce
+    JOIN
+        tracks t ON ce.track_isrc = t.id
+    GROUP BY
+        ce.chart_instance_id
+    ORDER BY
+        ce.chart_instance_id ASC;
+  `;
+
+  const result = await pool.query(query);
+
+  return result.rows as chartAge[];
+}
+
+export async function numberOfOldSongs(): Promise<numberOfSongs[]> {
+  const query = `
+    SELECT
+        to_char(ce.chart_instance_id::date, 'Mon DD, YYYY') AS chart_date,
+        COUNT(*) FILTER (WHERE (ce.chart_instance_id::date - t.release_date::date) > 365)::int AS one_yr,
+        COUNT(*) FILTER (WHERE (ce.chart_instance_id::date - t.release_date::date) > 730)::int AS two_yr,
+        COUNT(*) FILTER (WHERE (ce.chart_instance_id::date - t.release_date::date) > 1095)::int AS three_yr
+    FROM
+        chart_entries ce
+    JOIN
+        tracks t ON ce.track_isrc = t.id
+    GROUP BY
+        ce.chart_instance_id
+    ORDER BY
+        ce.chart_instance_id ASC;
+  `;
+
+  const result = await pool.query(query);
+
+  return result.rows as numberOfSongs[];
+}
+
+export async function percentageOfRecentSongs(): Promise<percentageOfSongs[]> {
+  const query = `
+    SELECT
+        to_char(ce.chart_instance_id::date, 'Mon DD, YYYY') AS chart_date,
+        ROUND(
+            (COUNT(*) FILTER (WHERE (ce.chart_instance_id::date - t.release_date::date) < 14) * 100.0) 
+            / NULLIF(COUNT(*), 0), 
+            2
+        )::float AS percentage
+    FROM
+        chart_entries ce
+    JOIN
+        tracks t ON ce.track_isrc = t.id
+    GROUP BY
+        ce.chart_instance_id
+    ORDER BY
+        ce.chart_instance_id ASC;
+  `;
+
+  const result = await pool.query(query);
+
+  return result.rows as percentageOfSongs[];
 }

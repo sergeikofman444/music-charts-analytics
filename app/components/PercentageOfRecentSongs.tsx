@@ -1,9 +1,9 @@
 import { LineChart } from '@mui/x-charts/LineChart';
-import { chartAge, } from '../../lib/utils'
+import { percentageOfSongs, } from '../../lib/utils'
 
-export default function TimeAgeTimeSeries({ chartAges }: { chartAges: chartAge[] }) {
-    const labels = chartAges.map(item => item.chart_date);
-    const dataPoints = chartAges.map(item => item.age);
+export default function TimeAgeTimeSeries({ percentageOfSongs }: { percentageOfSongs: percentageOfSongs[] }) {
+    const labels = percentageOfSongs.map(item => item.chart_date);
+    const dataPoints = percentageOfSongs.map(item => item.percentage);
 
   return (
     <LineChart

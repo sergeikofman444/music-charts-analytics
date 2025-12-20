@@ -1,8 +1,33 @@
 import { getTopPlaylist } from "./api/spotify/playlist/route";
-import { getChartByDate, getChartDates, getAverageAgePerChart } from "@/lib/db";
+import { getChartByDate, getChartDates, getAverageAgePerChart, getMedianAgePerChart, numberOfOldSongs, percentageOfRecentSongs } from "@/lib/db";
 import { calculateTrackAge, dateOptions } from "@/lib/utils";
 import ChartMenu from "./components/ChartMenu";
 import TimeAgeTimeSeries from "./components/TrackAgeTimeSeries"
+import NumberOfOldSongsTimeSeries from "./components/NumberOfOldSongsTimeSeries"
+import PercentageOfRecentSongs from "./components/PercentageOfRecentSongs"
+import { DataGrid, GridColDef } from '@mui/x-data-grid';
+
+
+export const columns: GridColDef<[number]>[] = [
+  {
+    field: 'trackName',
+    headerName: 'Track Name',
+    type: 'string',
+    width: 150,
+  },
+  {
+    field: 'artistName',
+    headerName: 'Artist Name',
+    type: 'string',
+    width: 150,
+  },
+  {
+    field: 'trackAge',
+    headerName: 'Track Age (in days)',
+    type: 'number',
+    width: 110,
+  },
+];
 
 export default async function Home({
   searchParams,
@@ -19,8 +44,12 @@ export default async function Home({
     calculateTrackAge(song.release_date),
   ) as number[];
 
+  const rows = chartData;
+
   const averageTrackAgeInDays = averageTrackAge(trackAges);
   const averageAgesOverTime = await getAverageAgePerChart();
+  const numberOfOldSongsOverTime = await numberOfOldSongs();
+  const percentOfRecentSongs = await percentageOfRecentSongs();
 
   const selectedDateAsDate = new Date(`${selectedDate}T12:00:00`);
   const readableDate = selectedDateAsDate.toLocaleDateString(
@@ -32,6 +61,10 @@ export default async function Home({
     <main style={{ padding: "20px" }}>
       <div className="flex justify-center">Average track age per chart instance</div>
       <TimeAgeTimeSeries chartAges={averageAgesOverTime}/>
+      <div className="flex justify-center">Number of songs older than a given age</div>
+      <NumberOfOldSongsTimeSeries numberOfSongs={numberOfOldSongsOverTime}/>
+      <div className="flex justify-center">Percentage of Songs less than two weeks old</div>
+      <PercentageOfRecentSongs percentageOfSongs={percentOfRecentSongs}/>
       <div className="flex flex-col items-end">
         <div>
           <ChartMenu chartDates={chartDates} />
