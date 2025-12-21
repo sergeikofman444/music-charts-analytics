@@ -31,8 +31,6 @@ export async function getTopPlaylist(): Promise<SpotifyPlaylist> {
   const clientId = process.env.SPOTIFY_CLIENT_ID!;
   const clientSecret = process.env.SPOTIFY_CLIENT_SECRET!;
 
-  console.log(clientId, clientSecret);
-
   const tokenRes = await fetch("https://accounts.spotify.com/api/token", {
     method: "POST",
     headers: {
@@ -46,8 +44,6 @@ export async function getTopPlaylist(): Promise<SpotifyPlaylist> {
 
   const tokenData = await tokenRes.json();
   const accessToken = tokenData.access_token;
-
-  console.log(accessToken);
 
   const playlistRes = await fetch(
     "https://api.spotify.com/v1/playlists/6qd48xm5P7JXCxSdIQe4Ur",

@@ -25,7 +25,7 @@ export async function getSongs() {
   return result.rows;
 }
 
-interface ChartEntry {
+export interface ChartEntry {
   position: number;
   track_isrc: string;
   track_name: string;
@@ -53,7 +53,7 @@ export async function getChartByDate(chartDate: string): Promise<ChartEntry[]> {
         ce.track_isrc,
         t.name AS track_name,
         t.album,
-        t.release_date,
+        to_char(t.release_date::date, 'Mon DD, YYYY') as release_date,
         GREATEST(0, ce.chart_instance_id::date - t.release_date::date) AS track_age_days,
         COALESCE(ta.all_artist_names, 'Unknown Artist(s)') AS all_artist_names
     FROM
@@ -89,7 +89,31 @@ export async function getAverageAgePerChart(): Promise<chartAge[]> {
   const query = `
     SELECT
         to_char(ce.chart_instance_id::date, 'Mon DD, YYYY') AS chart_date,
-        ROUND(AVG(ce.chart_instance_id::date - t.release_date::date), 2) AS age
+        GREATEST(ROUND(AVG(ce.chart_instance_id::date - t.release_date::date), 2), 0) AS age
+    FROM
+        chart_entries ce
+    JOIN
+        tracks t ON ce.track_isrc = t.id
+    GROUP BY
+        ce.chart_instance_id
+    ORDER BY
+        ce.chart_instance_id ASC;
+  `;
+
+  const result = await pool.query(query);
+
+  return result.rows as chartAge[];
+}
+
+export async function getWeightedAgePerChart(): Promise<chartAge[]> {
+  const query = `
+    SELECT
+        to_char(ce.chart_instance_id::date, 'Mon DD, YYYY') AS chart_date,
+        ROUND(
+            SUM((ce.chart_instance_id::date - t.release_date::date) * (101 - ce.position))::numeric 
+            / SUM(101 - ce.position), 
+            2
+        )::float AS age
     FROM
         chart_entries ce
     JOIN
@@ -152,22 +176,35 @@ export async function numberOfOldSongs(): Promise<numberOfSongs[]> {
 
 export async function percentageOfRecentSongs(): Promise<percentageOfSongs[]> {
   const query = `
-    SELECT
-        to_char(ce.chart_instance_id::date, 'Mon DD, YYYY') AS chart_date,
+    WITH daily_stats AS (
+        SELECT
+            ce.chart_instance_id,
+            to_char(ce.chart_instance_id::date, 'Mon DD, YYYY') AS chart_date,
+            ROUND(
+                (COUNT(*) FILTER (WHERE (ce.chart_instance_id::date - t.release_date::date) < 16) * 100.0) 
+                / NULLIF(COUNT(*), 0), 
+                2
+            )::float AS percentage
+        FROM
+            chart_entries ce
+        JOIN
+            tracks t ON ce.track_isrc = t.id
+        GROUP BY
+            ce.chart_instance_id
+    )
+    SELECT 
+        chart_date,
+        percentage,
         ROUND(
-            (COUNT(*) FILTER (WHERE (ce.chart_instance_id::date - t.release_date::date) < 14) * 100.0) 
-            / NULLIF(COUNT(*), 0), 
+            AVG(percentage) OVER (
+                ORDER BY chart_instance_id 
+                ROWS BETWEEN 51 PRECEDING AND CURRENT ROW
+            )::numeric, 
             2
-        )::float AS percentage
-    FROM
-        chart_entries ce
-    JOIN
-        tracks t ON ce.track_isrc = t.id
-    GROUP BY
-        ce.chart_instance_id
-    ORDER BY
-        ce.chart_instance_id ASC;
-  `;
+        )::float AS moving_avg
+    FROM daily_stats
+    ORDER BY chart_instance_id ASC;
+`;
 
   const result = await pool.query(query);
 

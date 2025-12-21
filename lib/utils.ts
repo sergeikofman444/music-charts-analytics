@@ -37,5 +37,6 @@ export type numberOfSongs = {
 export type percentageOfSongs = {
   chart_date: string,
   percentage: number,
+  moving_avg: number
 }
 

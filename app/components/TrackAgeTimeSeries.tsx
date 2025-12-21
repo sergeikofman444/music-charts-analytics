@@ -13,6 +13,12 @@ export default function TimeAgeTimeSeries({ chartAges }: { chartAges: chartAge[]
                 scaleType: 'point',
             }
         ]}
+      yAxis={[
+        { 
+          // scaleType: 'log',
+          // min: 1,
+        }
+        ]}
       series={[
         {
           data: dataPoints,

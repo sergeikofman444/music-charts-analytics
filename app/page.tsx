@@ -1,39 +1,23 @@
 import { getTopPlaylist } from "./api/spotify/playlist/route";
-import { getChartByDate, getChartDates, getAverageAgePerChart, getMedianAgePerChart, numberOfOldSongs, percentageOfRecentSongs } from "@/lib/db";
+import { getChartByDate, getChartDates, getAverageAgePerChart, getMedianAgePerChart, numberOfOldSongs, percentageOfRecentSongs, getWeightedAgePerChart } from "@/lib/db";
 import { calculateTrackAge, dateOptions } from "@/lib/utils";
 import ChartMenu from "./components/ChartMenu";
 import TimeAgeTimeSeries from "./components/TrackAgeTimeSeries"
 import NumberOfOldSongsTimeSeries from "./components/NumberOfOldSongsTimeSeries"
 import PercentageOfRecentSongs from "./components/PercentageOfRecentSongs"
-import { DataGrid, GridColDef } from '@mui/x-data-grid';
+import ChartTable from "./components/ChartGrid"
 
 
-export const columns: GridColDef<[number]>[] = [
-  {
-    field: 'trackName',
-    headerName: 'Track Name',
-    type: 'string',
-    width: 150,
-  },
-  {
-    field: 'artistName',
-    headerName: 'Artist Name',
-    type: 'string',
-    width: 150,
-  },
-  {
-    field: 'trackAge',
-    headerName: 'Track Age (in days)',
-    type: 'number',
-    width: 110,
-  },
-];
+
+
 
 export default async function Home({
   searchParams,
 }: {
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }) {
+  const apiData = await getTopPlaylist();
+  console.log(apiData)
   const chartDates = await getChartDates();
 
   const DEFAULT_DATE = "2025-08-30";
@@ -48,6 +32,7 @@ export default async function Home({
 
   const averageTrackAgeInDays = averageTrackAge(trackAges);
   const averageAgesOverTime = await getAverageAgePerChart();
+  const weightedAveragesOverTime = await getWeightedAgePerChart();
   const numberOfOldSongsOverTime = await numberOfOldSongs();
   const percentOfRecentSongs = await percentageOfRecentSongs();
 
@@ -61,6 +46,8 @@ export default async function Home({
     <main style={{ padding: "20px" }}>
       <div className="flex justify-center">Average track age per chart instance</div>
       <TimeAgeTimeSeries chartAges={averageAgesOverTime}/>
+      <div className="flex justify-center">Weighted Average track age per chart instance</div>
+      <TimeAgeTimeSeries chartAges={weightedAveragesOverTime}/>
       <div className="flex justify-center">Number of songs older than a given age</div>
       <NumberOfOldSongsTimeSeries numberOfSongs={numberOfOldSongsOverTime}/>
       <div className="flex justify-center">Percentage of Songs less than two weeks old</div>
@@ -75,18 +62,9 @@ export default async function Home({
         <div>
           <h1>Songs for the week of {readableDate}</h1>
         </div>
-        <div>
-          <ul>
-            {chartData.map((song) => {
-              return (
-                <li key={song.position}>
-                  {song.track_name} - {song.all_artist_names},{" "}
-                  {song.track_age_days}
-                </li>
-              );
-            })}
-          </ul>
-        </div>
+        <ChartTable 
+          rows={rows}
+        />
       </div>
     </main>
   );

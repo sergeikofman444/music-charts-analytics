@@ -7,6 +7,7 @@ export default function TimeAgeTimeSeries({ percentageOfSongs }: { percentageOfS
 
   return (
     <LineChart
+      dataset={percentageOfSongs}
       xAxis={[
             { 
                 data: labels,
@@ -15,7 +16,17 @@ export default function TimeAgeTimeSeries({ percentageOfSongs }: { percentageOfS
         ]}
       series={[
         {
-          data: dataPoints,
+          dataKey: 'percentage',
+          label: '% New (<16 days)',
+          color: 'blue',
+          showMark: false,
+        },
+        {
+          dataKey: 'moving_avg',
+          label: 'Full-year Trend',
+          color: 'red',
+          type: 'line',
+          disableHighlight: false,
           showMark: false,
         },
       ]}
