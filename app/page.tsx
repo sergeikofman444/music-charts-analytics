@@ -1,15 +1,9 @@
 import { getTopPlaylist } from "./api/spotify/playlist/route";
 import { getChartByDate, getChartDates, getAverageAgePerChart, getMedianAgePerChart, numberOfOldSongs, percentageOfRecentSongs, getWeightedAgePerChart } from "@/lib/db";
 import { calculateTrackAge, dateOptions } from "@/lib/utils";
+import ChartDashboard from "./components/ChartDashboard";
 import ChartMenu from "./components/ChartMenu";
-import TimeAgeTimeSeries from "./components/TrackAgeTimeSeries"
-import NumberOfOldSongsTimeSeries from "./components/NumberOfOldSongsTimeSeries"
-import PercentageOfRecentSongs from "./components/PercentageOfRecentSongs"
 import ChartTable from "./components/ChartGrid"
-
-
-
-
 
 export default async function Home({
   searchParams,
@@ -31,10 +25,12 @@ export default async function Home({
   const rows = chartData;
 
   const averageTrackAgeInDays = averageTrackAge(trackAges);
-  const averageAgesOverTime = await getAverageAgePerChart();
-  const weightedAveragesOverTime = await getWeightedAgePerChart();
-  const numberOfOldSongsOverTime = await numberOfOldSongs();
-  const percentOfRecentSongs = await percentageOfRecentSongs();
+  const [avg, weighted, numOld, percent] = await Promise.all([
+     getAverageAgePerChart(),
+     getWeightedAgePerChart(),
+     numberOfOldSongs(),
+     percentageOfRecentSongs()
+  ]);
 
   const selectedDateAsDate = new Date(`${selectedDate}T12:00:00`);
   const readableDate = selectedDateAsDate.toLocaleDateString(
@@ -44,14 +40,12 @@ export default async function Home({
 
   return (
     <main style={{ padding: "20px" }}>
-      <div className="flex justify-center">Average track age per chart instance</div>
-      <TimeAgeTimeSeries chartAges={averageAgesOverTime}/>
-      <div className="flex justify-center">Weighted Average track age per chart instance</div>
-      <TimeAgeTimeSeries chartAges={weightedAveragesOverTime}/>
-      <div className="flex justify-center">Number of songs older than a given age</div>
-      <NumberOfOldSongsTimeSeries numberOfSongs={numberOfOldSongsOverTime}/>
-      <div className="flex justify-center">Percentage of Songs less than two weeks old</div>
-      <PercentageOfRecentSongs percentageOfSongs={percentOfRecentSongs}/>
+      <ChartDashboard 
+        averageAgesOverTime={avg}
+        weightedAveragesOverTime={weighted}
+        numberOfOldSongsOverTime={numOld}
+        percentOfRecentSongs={percent}
+      />
       <div className="flex flex-col items-end">
         <div>
           <ChartMenu chartDates={chartDates} />
@@ -59,9 +53,7 @@ export default async function Home({
         <div>Average Track Age in Days: {averageTrackAgeInDays}</div>
       </div>
       <div className="w-max-80% flex flex-col items-center">
-        <div>
-          <h1>Songs for the week of {readableDate}</h1>
-        </div>
+        <div className="font-semibold text-xl m-4">Billboard Hot 100 for {readableDate}</div>
         <ChartTable 
           rows={rows}
         />

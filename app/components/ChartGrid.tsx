@@ -37,7 +37,6 @@ export const columns: GridColDef<ChartEntry>[] = [
 ];
 
 export default function ChartTable({ rows }: { rows: any[] }) {
-    console.log(rows)
   return (
     <div style={{ height: "full", width: "auto" }}>
       <DataGrid 

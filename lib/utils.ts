@@ -27,6 +27,11 @@ export type chartAge = {
     age: number,
 }
 
+export interface TrackAgeProps {
+  chartAges: chartAge[];
+  title: string;
+}
+
 export type numberOfSongs = {
   chart_date: string,
   one_yr: number,
@@ -40,3 +45,9 @@ export type percentageOfSongs = {
   moving_avg: number
 }
 
+export interface ChartProps {
+  averageAgesOverTime: chartAge[];
+  weightedAveragesOverTime: chartAge[];
+  numberOfOldSongsOverTime: numberOfSongs[];
+  percentOfRecentSongs: percentageOfSongs[];
+}

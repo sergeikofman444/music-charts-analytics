@@ -89,7 +89,7 @@ export async function getAverageAgePerChart(): Promise<chartAge[]> {
   const query = `
     SELECT
         to_char(ce.chart_instance_id::date, 'Mon DD, YYYY') AS chart_date,
-        GREATEST(ROUND(AVG(ce.chart_instance_id::date - t.release_date::date), 2), 0) AS age
+        GREATEST(ROUND(AVG(ce.chart_instance_id::date - t.release_date::date), 2), 0)::float AS age
     FROM
         chart_entries ce
     JOIN
@@ -109,11 +109,13 @@ export async function getWeightedAgePerChart(): Promise<chartAge[]> {
   const query = `
     SELECT
         to_char(ce.chart_instance_id::date, 'Mon DD, YYYY') AS chart_date,
-        ROUND(
-            SUM((ce.chart_instance_id::date - t.release_date::date) * (101 - ce.position))::numeric 
-            / SUM(101 - ce.position), 
-            2
-        )::float AS age
+        GREATEST(
+          ROUND(
+              SUM((ce.chart_instance_id::date - t.release_date::date) * (101 - ce.position))::numeric 
+              / SUM(101 - ce.position), 
+              2
+          ), 
+        0)::float AS age
     FROM
         chart_entries ce
     JOIN
