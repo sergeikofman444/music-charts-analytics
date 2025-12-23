@@ -26,7 +26,7 @@ export default async function Home({
   console.log(apiData);
   const chartDates = await getChartDates();
 
-  const DEFAULT_DATE = "2025-08-30";
+  const DEFAULT_DATE = "2014-12-27";
   const selectedDate = ((await searchParams).date || DEFAULT_DATE) as string;
   const chartData = await getChartByDate(selectedDate);
 
