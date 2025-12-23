@@ -3,6 +3,9 @@ import { chartAge, numberOfSongs, percentageOfSongs } from "./utils";
 
 export const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
+  ssl: {
+    rejectUnauthorized: false,
+  },
 });
 
 export async function getSongs() {
