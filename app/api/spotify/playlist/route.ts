@@ -1,3 +1,5 @@
+export const dynamic = 'force-dynamic'
+
 export type SpotifyPlaylist = {
   id: string;
   name: string;

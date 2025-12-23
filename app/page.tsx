@@ -1,3 +1,5 @@
+export const dynamic = 'force-dynamic'
+
 import { GET as getTopPlaylist }  from "./api/spotify/playlist/route";
 import {
   getChartByDate,
