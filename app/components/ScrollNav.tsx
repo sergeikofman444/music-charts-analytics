@@ -9,8 +9,8 @@ export default function ScrollNav() {
   ];
 
   return (
-    <nav className="sticky left-0 top-0 h-full w-20 bg-white p-6 hidden md:block">
-      <div className="flex flex-col gap-4">
+    <nav className="sticky left-0 top-0 h-full w-20 bg-white pl-6 pt-6 hidden md:block">
+      <div className="flex flex-col gap-4 items-end">
         {navItems.map((item) => (
           <button
             key={item.id}
