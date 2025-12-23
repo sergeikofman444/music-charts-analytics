@@ -23,13 +23,31 @@ export default function ChartSummary(props: ChartSummaryProps) {
           />
         </div>
         {isSummaryOpen && (
-          <div className="flex flex-col items-end">
-            <div>{recentPercent}% of tracks are two weeks old or younger</div>
-            <div>Average Track Age in Days: {age}</div>
-            <div>Weighted Average Track Age in Days: {weightedAge}</div>
-            <div>{one_yr} Tracks older than one year</div>
-            <div>{two_yrs} Tracks older than two years</div>
-            <div>{three_yrs} Tracks older than three years</div>
+          <div className="flex flex-col items-end font-light text-slate-600">
+            <div>
+              <span className="font-semibold">{recentPercent}%</span> of tracks
+              are two weeks old or younger
+            </div>
+            <div>
+              Average Track Age in Days:{" "}
+              <span className="font-semibold">{age}</span>
+            </div>
+            <div>
+              Weighted Average Track Age in Days:{" "}
+              <span className="font-semibold">{weightedAge}</span>
+            </div>
+            <div>
+              <span className="font-semibold">{one_yr}</span> Tracks older than
+              one year
+            </div>
+            <div>
+              <span className="font-semibold">{two_yrs}</span> Tracks older than
+              two years
+            </div>
+            <div>
+              <span className="font-semibold">{three_yrs}</span> Tracks older
+              than three years
+            </div>
           </div>
         )}
       </button>
