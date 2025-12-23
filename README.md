@@ -1,17 +1,24 @@
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
+https://music-charts-analytics-bkz5.vercel.app/
+
 This project performs analytics on current and historical music charts. The current version pulls from a PostgreSQL db containing track, artist, and chart data, and displays data about the release date and age of songs in the chart as well as the average age of a given week's chart.
 
 The initial data was aggregated processed with python - you can find the processing scripts here: https://github.com/sergeikofman444/music-data-scripts
 Full data CSVs will be uploaded to the `music-data-scripts` repo when complete
 
-<img width="1325" height="333" alt="Screenshot 2025-12-20 at 12 17 51 PM" src="https://github.com/user-attachments/assets/09efb14e-0353-4b53-a8c0-1ba798326881" />
 
-<img width="1349" height="362" alt="Screenshot 2025-12-20 at 12 17 43 PM" src="https://github.com/user-attachments/assets/aaca0c1a-654b-46a4-8afa-b8c5d2de9a8f" />
+https://github.com/user-attachments/assets/ba7f699e-3371-407a-9e7f-c8b47226c9bc
 
-<img width="1348" height="336" alt="Screenshot 2025-12-20 at 12 16 57 PM" src="https://github.com/user-attachments/assets/2d0a9a5b-848c-48ac-996e-047295b45605" />
+https://github.com/user-attachments/assets/eaca272c-d512-40a4-880a-20905472b0b8
 
-https://github.com/user-attachments/assets/2ecfb190-214d-426e-83dd-16e5356a74fd
+https://github.com/user-attachments/assets/21b12882-db3a-45a2-9401-0d475a19f83e
+
+https://github.com/user-attachments/assets/ea8d9ee5-2eb9-4a9b-b5cb-fda149972c2b
+
+
+
+
 
 ## Getting Started
 
