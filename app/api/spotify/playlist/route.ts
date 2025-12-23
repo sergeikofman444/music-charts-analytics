@@ -27,7 +27,7 @@ export type SpotifyPlaylistItem = {
   };
 };
 
-export async function getTopPlaylist(): Promise<SpotifyPlaylist> {
+export async function GET(): Promise<Response> {
   const clientId = process.env.SPOTIFY_CLIENT_ID!;
   const clientSecret = process.env.SPOTIFY_CLIENT_SECRET!;
 
@@ -56,5 +56,5 @@ export async function getTopPlaylist(): Promise<SpotifyPlaylist> {
 
   const data = (await playlistRes.json()) as SpotifyPlaylist;
 
-  return data;
+  return Response.json(data);
 }

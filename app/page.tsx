@@ -1,4 +1,4 @@
-import { getTopPlaylist } from "./api/spotify/playlist/route";
+import { GET as getTopPlaylist }  from "./api/spotify/playlist/route";
 import {
   getChartByDate,
   getChartDates,
