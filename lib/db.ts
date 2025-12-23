@@ -1,5 +1,5 @@
 import { Pool } from "pg";
-import { chartAge, numberOfSongs, percentageOfSongs } from "./utils"
+import { chartAge, numberOfSongs, percentageOfSongs } from "./utils";
 
 export const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
@@ -89,6 +89,7 @@ export async function getAverageAgePerChart(): Promise<chartAge[]> {
   const query = `
     SELECT
         to_char(ce.chart_instance_id::date, 'Mon DD, YYYY') AS chart_date,
+        ce.chart_instance_id::text AS chart_date_param,
         GREATEST(ROUND(AVG(ce.chart_instance_id::date - t.release_date::date), 2), 0)::float AS age
     FROM
         chart_entries ce
@@ -109,6 +110,7 @@ export async function getWeightedAgePerChart(): Promise<chartAge[]> {
   const query = `
     SELECT
         to_char(ce.chart_instance_id::date, 'Mon DD, YYYY') AS chart_date,
+        ce.chart_instance_id::text AS chart_date_param,
         GREATEST(
           ROUND(
               SUM((ce.chart_instance_id::date - t.release_date::date) * (101 - ce.position))::numeric 
@@ -135,6 +137,7 @@ export async function getMedianAgePerChart(): Promise<chartAge[]> {
   const query = `
     SELECT
         to_char(ce.chart_instance_id::date, 'Mon DD, YYYY') AS chart_date,
+        ce.chart_instance_id::text AS chart_date_param,
         ROUND(
             PERCENTILE_CONT(0.5) WITHIN GROUP (ORDER BY (ce.chart_instance_id::date - t.release_date::date))::numeric, 
             2
@@ -158,6 +161,7 @@ export async function numberOfOldSongs(): Promise<numberOfSongs[]> {
   const query = `
     SELECT
         to_char(ce.chart_instance_id::date, 'Mon DD, YYYY') AS chart_date,
+        ce.chart_instance_id::text AS chart_date_param,
         COUNT(*) FILTER (WHERE (ce.chart_instance_id::date - t.release_date::date) > 365)::int AS one_yr,
         COUNT(*) FILTER (WHERE (ce.chart_instance_id::date - t.release_date::date) > 730)::int AS two_yr,
         COUNT(*) FILTER (WHERE (ce.chart_instance_id::date - t.release_date::date) > 1095)::int AS three_yr
@@ -182,6 +186,7 @@ export async function percentageOfRecentSongs(): Promise<percentageOfSongs[]> {
         SELECT
             ce.chart_instance_id,
             to_char(ce.chart_instance_id::date, 'Mon DD, YYYY') AS chart_date,
+            ce.chart_instance_id::text AS chart_date_param,
             ROUND(
                 (COUNT(*) FILTER (WHERE (ce.chart_instance_id::date - t.release_date::date) < 16) * 100.0) 
                 / NULLIF(COUNT(*), 0), 
@@ -196,6 +201,7 @@ export async function percentageOfRecentSongs(): Promise<percentageOfSongs[]> {
     )
     SELECT 
         chart_date,
+        chart_date_param,
         percentage,
         ROUND(
             AVG(percentage) OVER (
@@ -209,6 +215,8 @@ export async function percentageOfRecentSongs(): Promise<percentageOfSongs[]> {
 `;
 
   const result = await pool.query(query);
+
+  console.log(result)
 
   return result.rows as percentageOfSongs[];
 }

@@ -22,14 +22,14 @@ export default function ChartMenu({ chartDates }: { chartDates: any[] }) {
   const handleDateSelect = (selectedDate: string) => {
     const params = new URLSearchParams(searchParams.toString());
 
-    params.set("query", selectedDate);
+    params.set("date", selectedDate);
 
     router.push(`?${params.toString()}`);
 
     setAnchorEl(null);
   };
 
-  const currentChartDate = searchParams.get("query");
+  const currentChartDate = searchParams.get("date");
   const defaultButtonLabel = currentChartDate || "Select Chart Date";
 
   return (
@@ -49,13 +49,11 @@ export default function ChartMenu({ chartDates }: { chartDates: any[] }) {
         slots={{ transition: Fade }}
         anchorEl={anchorEl}
         open={open}
-        onClose={() => setAnchorEl(null)} // Close handler for backdrop click
+        onClose={() => setAnchorEl(null)}
       >
         {chartDates.map((chartDateObject) => {
-          // The date string to be used in the URL (YYYY-MM-DD format for database)
           const dateForUrl = chartDateObject.date.toISOString().split("T")[0];
 
-          // The human-readable label for the menu item
           const label = chartDateObject.date.toLocaleDateString(
             "en-US",
             dateOptions,
@@ -65,7 +63,6 @@ export default function ChartMenu({ chartDates }: { chartDates: any[] }) {
             <MenuItem
               key={dateForUrl}
               onClick={() => handleDateSelect(dateForUrl)}
-              // Optional: Highlight the currently selected date
               selected={dateForUrl === currentChartDate}
             >
               {label}

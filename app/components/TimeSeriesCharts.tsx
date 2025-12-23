@@ -1,36 +1,50 @@
-"use client"
-import { LineChart } from '@mui/x-charts/LineChart';
-import { TrackAgeProps, percentageOfSongs, numberOfSongs} from '../../lib/utils'
-import { Box } from '@mui/material';
+"use client";
+import { LineChart } from "@mui/x-charts/LineChart";
+import {
+  TrackAgeProps,
+  percentageOfSongs,
+  numberOfSongs,
+} from "../../lib/utils";
+import { Box } from "@mui/material";
+import { useRouter, useSearchParams } from "next/navigation";
+import { useChartNavigation } from "@/hooks";
 
 export function TrackAgeTimeSeries({ chartAges, title }: TrackAgeProps) {
-  const dataset = chartAges.map(item => ({
-    date: new Date(item.chart_date),
-    age: item.age,
+  const chartDataWithDates = chartAges.map((item) => ({
+    ...item,
+    dateObject: new Date(item.chart_date_param.replace(/-/g, "/")),
   }));
+
+  const { navigateToDate } = useChartNavigation();
 
   return (
     <>
-    <div className="flex justify-center">{title}</div>
+      <div className="flex justify-center font-semibold">{title}</div>
       <Box className="w-full flex justify-center">
         <LineChart
           className="w-full"
-          dataset={dataset}
+          dataset={chartDataWithDates}
           xAxis={[
-            { 
-              dataKey: 'date',
-              scaleType: 'time',
-              valueFormatter: (date: Date) => 
-                date.toLocaleDateString('en-US', { month: 'short', year: '2-digit' }),
-            }
+            {
+              dataKey: "dateObject", // Point to the Date object
+              scaleType: "time",
+              valueFormatter: (date) => {
+                return date.toLocaleDateString("en-US", {
+                  month: "short",
+                  day: "2-digit",
+                  year: "numeric",
+                });
+              },
+            },
           ]}
           series={[
             {
-              dataKey: 'age',
+              dataKey: "age",
               showMark: false,
-              valueFormatter: (value) => `${value} days`
+              valueFormatter: (value) => `${value} days`,
             },
           ]}
+          onAxisClick={(event, d) => navigateToDate(chartAges, d)}
           grid={{ horizontal: true }}
           height={300}
         />
@@ -39,42 +53,54 @@ export function TrackAgeTimeSeries({ chartAges, title }: TrackAgeProps) {
   );
 }
 
-export function NumberOfOldSongsTimeSeries({ numberOfSongs }: { numberOfSongs: numberOfSongs[] }) {
-    const dataset = numberOfSongs
-    const labels = numberOfSongs.map(item => item.chart_date);
+export function NumberOfOldSongsTimeSeries({
+  numberOfSongs,
+}: {
+  numberOfSongs: numberOfSongs[];
+}) {
+  const dataset = numberOfSongs.map((item) => ({
+    ...item,
+    dateObject: new Date(item.chart_date_param.replace(/-/g, "/")),
+  }));
+
+  const labels = numberOfSongs.map((item) => item.chart_date);
+  const { navigateToDate } = useChartNavigation();
 
   return (
     <>
-    <div className="flex justify-center">Number of songs older than a given age</div>
+      <div className="flex justify-center font-semibold">
+        Number of songs older than a given age
+      </div>
       <Box className="w-full flex justify-center">
         <LineChart
           dataset={dataset}
           xAxis={[
-                { 
-                    data: labels,
-                    scaleType: 'point',
-                }
-            ]}
-          series={[
             {
-            id: '1 Year',
-            label: '1 Year old',
-            dataKey: 'one_yr',
-            showMark: false,
-            },
-            {
-            id: '2 Years',
-            label: '2 Years old',
-            dataKey: 'two_yr',
-            showMark: false,
-            },
-            {
-            id: '3 Years',
-            label: '3 Years old',
-            dataKey: 'three_yr',
-            showMark: false,
+              data: labels,
+              scaleType: "point",
             },
           ]}
+          series={[
+            {
+              id: "1 Year",
+              label: "1 Year old",
+              dataKey: "one_yr",
+              showMark: false,
+            },
+            {
+              id: "2 Years",
+              label: "2 Years old",
+              dataKey: "two_yr",
+              showMark: false,
+            },
+            {
+              id: "3 Years",
+              label: "3 Years old",
+              dataKey: "three_yr",
+              showMark: false,
+            },
+          ]}
+          onAxisClick={(event, d) => navigateToDate(numberOfSongs, d)}
           grid={{ horizontal: true }}
           height={300}
         />
@@ -83,37 +109,45 @@ export function NumberOfOldSongsTimeSeries({ numberOfSongs }: { numberOfSongs: n
   );
 }
 
-export function PercentageOfRecentSongs({ percentageOfSongs }: { percentageOfSongs: percentageOfSongs[] }) {
-    const labels = percentageOfSongs.map(item => item.chart_date);
+export function PercentageOfRecentSongs({
+  percentageOfSongs,
+}: {
+  percentageOfSongs: percentageOfSongs[];
+}) {
+  const labels = percentageOfSongs.map((item) => item.chart_date);
+  const { navigateToDate } = useChartNavigation();
 
   return (
     <>
-    <div className="flex justify-center">Percentage of Songs less than two weeks old</div>
+      <div className="flex justify-center font-semibold">
+        Percentage of Songs less than two weeks old
+      </div>
       <Box className="w-full flex justify-center">
         <LineChart
           dataset={percentageOfSongs}
           xAxis={[
-                { 
-                    data: labels,
-                    scaleType: 'point',
-                }
-            ]}
+            {
+              data: labels,
+              scaleType: "point",
+            },
+          ]}
           series={[
             {
-              dataKey: 'percentage',
-              label: '% New (<16 days)',
-              color: 'blue',
+              dataKey: "percentage",
+              label: "% New (<16 days)",
+              color: "blue",
               showMark: false,
             },
             {
-              dataKey: 'moving_avg',
-              label: 'Full-year Trend',
-              color: 'red',
-              type: 'line',
+              dataKey: "moving_avg",
+              label: "Full-year Trend",
+              color: "red",
+              type: "line",
               disableHighlight: false,
               showMark: false,
             },
           ]}
+          onAxisClick={(event, d) => navigateToDate(percentageOfSongs, d)}
           grid={{ horizontal: true }}
           height={300}
         />
@@ -121,4 +155,3 @@ export function PercentageOfRecentSongs({ percentageOfSongs }: { percentageOfSon
     </>
   );
 }
-
