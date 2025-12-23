@@ -1,5 +1,5 @@
 import { useRouter, useSearchParams } from "next/navigation";
-import { scrollToSection } from "@/lib/utils"
+import { scrollToSection } from "@/lib/utils";
 
 export function useChartNavigation() {
   const router = useRouter();
@@ -20,7 +20,7 @@ export function useChartNavigation() {
 
       router.replace(`?${params.toString()}`, { scroll: false });
       router.refresh();
-      scrollToSection('chart')
+      scrollToSection("chart");
     }
   };
 

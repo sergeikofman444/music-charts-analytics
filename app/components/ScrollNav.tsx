@@ -1,8 +1,7 @@
-"use client"
-import { scrollToSection } from "@/lib/utils"
+"use client";
+import { scrollToSection } from "@/lib/utils";
 
 export default function ScrollNav() {
-
   const navItems = [
     { id: "trends", label: "Trends" },
     { id: "chart", label: "Chart" },

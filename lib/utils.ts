@@ -56,26 +56,26 @@ export interface ChartProps {
 }
 
 export interface ChartSummaryProps {
-  age: number | undefined,
-  weightedAge: number | undefined,
-  one_yr: number | undefined,
-  two_yrs: number | undefined,
-  three_yrs: number | undefined,
-  recentPercent: number | undefined,
+  age: number | undefined;
+  weightedAge: number | undefined;
+  one_yr: number | undefined;
+  two_yrs: number | undefined;
+  three_yrs: number | undefined;
+  recentPercent: number | undefined;
 }
 
-export function scrollToSection (sectionId: string) {
-    const element = document.getElementById(sectionId);
-    if (element) {
-      const offset = 80;
-      const bodyRect = document.body.getBoundingClientRect().top;
-      const elementRect = element.getBoundingClientRect().top;
-      const elementPosition = elementRect - bodyRect;
-      const offsetPosition = elementPosition - offset;
+export function scrollToSection(sectionId: string) {
+  const element = document.getElementById(sectionId);
+  if (element) {
+    const offset = 80;
+    const bodyRect = document.body.getBoundingClientRect().top;
+    const elementRect = element.getBoundingClientRect().top;
+    const elementPosition = elementRect - bodyRect;
+    const offsetPosition = elementPosition - offset;
 
-      window.scrollTo({
-        top: offsetPosition,
-        behavior: "smooth",
-      });
-    }
-  };
+    window.scrollTo({
+      top: offsetPosition,
+      behavior: "smooth",
+    });
+  }
+}

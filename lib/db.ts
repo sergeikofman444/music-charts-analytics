@@ -216,7 +216,7 @@ export async function percentageOfRecentSongs(): Promise<percentageOfSongs[]> {
 
   const result = await pool.query(query);
 
-  console.log(result)
+  console.log(result);
 
   return result.rows as percentageOfSongs[];
 }
