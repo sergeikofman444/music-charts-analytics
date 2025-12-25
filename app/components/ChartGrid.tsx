@@ -1,6 +1,6 @@
 "use client";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
-import { ChartEntry } from "@/lib/db";
+import { ChartEntry } from "@/lib/utils";
 
 export const columns: GridColDef<ChartEntry>[] = [
   {

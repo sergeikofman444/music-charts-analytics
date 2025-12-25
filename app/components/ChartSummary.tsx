@@ -8,7 +8,7 @@ export default function ChartSummary(props: ChartSummaryProps) {
   const [isSummaryOpen, setSummaryOpen] = useState(false);
 
   return (
-    <div className="text-sm flex flex-col items-end pr-2 w-100">
+    <div className="text-xs md:text-sm flex flex-col items-end pr-2 w-100">
       <button
         onClick={() => setSummaryOpen(!isSummaryOpen)}
         aria-label="Toggle menu"

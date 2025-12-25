@@ -7,7 +7,6 @@ This project performs analytics on current and historical music charts. The curr
 The initial data was aggregated processed with python - you can find the processing scripts here: https://github.com/sergeikofman444/music-data-scripts
 Full data CSVs will be uploaded to the `music-data-scripts` repo when complete
 
-
 https://github.com/user-attachments/assets/ba7f699e-3371-407a-9e7f-c8b47226c9bc
 
 https://github.com/user-attachments/assets/eaca272c-d512-40a4-880a-20905472b0b8
@@ -15,10 +14,6 @@ https://github.com/user-attachments/assets/eaca272c-d512-40a4-880a-20905472b0b8
 https://github.com/user-attachments/assets/21b12882-db3a-45a2-9401-0d475a19f83e
 
 https://github.com/user-attachments/assets/ea8d9ee5-2eb9-4a9b-b5cb-fda149972c2b
-
-
-
-
 
 ## Getting Started
 

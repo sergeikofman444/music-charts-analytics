@@ -1,21 +1,21 @@
-export const dynamic = 'force-dynamic'
+export const dynamic = "force-dynamic";
 
-import { GET as getTopPlaylist }  from "./api/spotify/playlist/route";
+import { GET as getTopPlaylist } from "./api/spotify/playlist/route";
 import {
   getChartByDate,
   getChartDates,
   getAverageAgePerChart,
-  getMedianAgePerChart,
   numberOfOldSongs,
   percentageOfRecentSongs,
   getWeightedAgePerChart,
 } from "@/lib/db";
-import { calculateTrackAge, dateOptions, numberOfSongs } from "@/lib/utils";
+import { dateOptions, numberOfSongs } from "@/lib/utils";
 import ChartDashboard from "./components/ChartDashboard";
 import ChartMenu from "./components/ChartMenu";
 import ChartTable from "./components/ChartGrid";
 import ScrollNav from "./components/ScrollNav";
 import ChartSummary from "./components/ChartSummary";
+import MobileChartGrid from "./components/MobileChartGrid";
 
 export default async function Home({
   searchParams,
@@ -62,7 +62,7 @@ export default async function Home({
   );
 
   return (
-    <main style={{ padding: "20px" }}>
+    <main className="md:p-5">
       <div className="flex items-start">
         <ScrollNav />
         <div className="flex-1 p-4 overflow-hidden">
@@ -95,15 +95,22 @@ export default async function Home({
               />
             </div>
             <div className="w-max-80% flex flex-col items-center">
-              <div className="font-semibold text-xl m-4">
+              <div className="text-center font-semibold text-xl m-4">
                 Billboard Hot 100 for {readableDate}
               </div>
-              <ChartTable rows={rows} />
+              <div className="hidden md:flex">
+                <ChartTable rows={rows} />
+              </div>
+              <div className="md:hidden">
+                <MobileChartGrid rows={rows} />
+              </div>
             </div>
           </div>
           <div id="about" className="flex flex-col items-center p-8">
-            <div className="font-semibold text-xl p-8">About This Project</div>
-            <div className="w-[80%]">
+            <div className="font-semibold text-xl p-2 md:p-8">
+              About This Project
+            </div>
+            <div className="md:w-[80%]">
               <div>
                 I used to check streaming and billboard charts pretty often. As
                 a musician myself, it was interesting to look for trends in the

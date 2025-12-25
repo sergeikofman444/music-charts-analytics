@@ -1,7 +1,12 @@
 import { Pool } from "pg";
-import { chartAge, numberOfSongs, percentageOfSongs } from "./utils";
+import {
+  chartAge,
+  numberOfSongs,
+  percentageOfSongs,
+  ChartEntry,
+} from "./utils";
 
-const isProduction = process.env.NODE_ENV === 'production';
+const isProduction = process.env.NODE_ENV === "production";
 
 export const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
@@ -26,16 +31,6 @@ export async function getSongs() {
         t.id, t.name, t.album, t.release_date
     `);
   return result.rows;
-}
-
-export interface ChartEntry {
-  position: number;
-  track_isrc: string;
-  track_name: string;
-  album: string;
-  release_date: Date;
-  track_age_days: number;
-  all_artist_names: string;
 }
 
 export async function getChartByDate(chartDate: string): Promise<ChartEntry[]> {
@@ -136,30 +131,6 @@ export async function getWeightedAgePerChart(): Promise<chartAge[]> {
   return result.rows as chartAge[];
 }
 
-export async function getMedianAgePerChart(): Promise<chartAge[]> {
-  const query = `
-    SELECT
-        to_char(ce.chart_instance_id::date, 'Mon DD, YYYY') AS chart_date,
-        ce.chart_instance_id::text AS chart_date_param,
-        ROUND(
-            PERCENTILE_CONT(0.5) WITHIN GROUP (ORDER BY (ce.chart_instance_id::date - t.release_date::date))::numeric, 
-            2
-        )::float AS age
-    FROM
-        chart_entries ce
-    JOIN
-        tracks t ON ce.track_isrc = t.id
-    GROUP BY
-        ce.chart_instance_id
-    ORDER BY
-        ce.chart_instance_id ASC;
-  `;
-
-  const result = await pool.query(query);
-
-  return result.rows as chartAge[];
-}
-
 export async function numberOfOldSongs(): Promise<numberOfSongs[]> {
   const query = `
     SELECT
@@ -218,8 +189,6 @@ export async function percentageOfRecentSongs(): Promise<percentageOfSongs[]> {
 `;
 
   const result = await pool.query(query);
-
-  console.log(result);
 
   return result.rows as percentageOfSongs[];
 }

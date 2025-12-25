@@ -36,7 +36,7 @@ export default function ChartDashboard(props: ChartProps) {
 
   return (
     <>
-      <div className="mb-8 flex justify-center gap-2">
+      <div className="mb-8 grid grid-cols-2 gap-2 justify-items-center md:flex md:justify-center">
         {chartControls.map((control) => (
           <ChartButton
             key={control.key}
@@ -46,7 +46,7 @@ export default function ChartDashboard(props: ChartProps) {
           />
         ))}
       </div>
-      <div className="w-[85%] mx-auto flex flex-col items-center justify-center">
+      <div className="md:w-[85%] mx-auto flex flex-col items-center justify-center">
         {!Object.values(visibleCharts).some((val) => val === true) && (
           <div className="text-sm text-gray-700 pb-6">
             Select one or more metrics to view data visualization
