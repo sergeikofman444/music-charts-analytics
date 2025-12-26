@@ -6,7 +6,6 @@ import {
   numberOfSongs,
 } from "../../lib/utils";
 import { Box } from "@mui/material";
-import { useRouter, useSearchParams } from "next/navigation";
 import { useChartNavigation } from "@/hooks";
 
 export function TrackAgeTimeSeries({ chartAges, title }: TrackAgeProps) {
@@ -19,14 +18,14 @@ export function TrackAgeTimeSeries({ chartAges, title }: TrackAgeProps) {
 
   return (
     <>
-      <div className="flex justify-center font-semibold">{title}</div>
+      <div className="flex justify-center font-semibold dark:text-black text-center">{title}</div>
       <Box className="w-full flex justify-center">
         <LineChart
           className="w-full"
           dataset={chartDataWithDates}
           xAxis={[
             {
-              dataKey: "dateObject", // Point to the Date object
+              dataKey: "dateObject",
               scaleType: "time",
               valueFormatter: (date) => {
                 return date.toLocaleDateString("en-US", {
@@ -68,7 +67,7 @@ export function NumberOfOldSongsTimeSeries({
 
   return (
     <>
-      <div className="flex justify-center font-semibold">
+      <div className="flex justify-center font-semibold dark:text-black text-center">
         Number of songs older than a given age
       </div>
       <Box className="w-full flex justify-center">
@@ -119,7 +118,7 @@ export function PercentageOfRecentSongs({
 
   return (
     <>
-      <div className="flex justify-center font-semibold">
+      <div className="flex justify-center font-semibold dark:text-black text-center">
         Percentage of Songs less than two weeks old
       </div>
       <Box className="w-full flex justify-center">
