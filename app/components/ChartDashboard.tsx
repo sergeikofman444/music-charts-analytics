@@ -17,10 +17,10 @@ export default function ChartDashboard(props: ChartProps) {
     percentOfRecentSongs,
   } = props;
   const [visibleCharts, setVisibleCharts] = useState({
+    numberOfOldSongs: true,
     percentageOfRecentSongs: true,
     averageAge: false,
     weightedAverageAge: false,
-    numberOfOldSongs: false,
   });
 
   const toggleChart = (key: keyof typeof visibleCharts) => {
@@ -28,10 +28,10 @@ export default function ChartDashboard(props: ChartProps) {
   };
 
   const chartControls = [
+    { key: "numberOfOldSongs", label: "Number of old tracks" },
     { key: "percentageOfRecentSongs", label: "Percentage of recent tracks" },
     { key: "averageAge", label: "Average Age of tracks on Chart" },
     { key: "weightedAverageAge", label: "Weighted Average Age" },
-    { key: "numberOfOldSongs", label: "Number of old tracks" },
   ] as const;
 
   return (
@@ -52,6 +52,11 @@ export default function ChartDashboard(props: ChartProps) {
             Select one or more metrics to view data visualization
           </div>
         )}
+        {visibleCharts.numberOfOldSongs && (
+          <NumberOfOldSongsTimeSeries
+            numberOfSongs={numberOfOldSongsOverTime}
+          />
+        )}
         {visibleCharts.percentageOfRecentSongs && (
           <PercentageOfRecentSongs percentageOfSongs={percentOfRecentSongs} />
         )}
@@ -65,11 +70,6 @@ export default function ChartDashboard(props: ChartProps) {
           <TrackAgeTimeSeries
             chartAges={weightedAveragesOverTime}
             title="Weighted Average track age per chart instance"
-          />
-        )}
-        {visibleCharts.numberOfOldSongs && (
-          <NumberOfOldSongsTimeSeries
-            numberOfSongs={numberOfOldSongsOverTime}
           />
         )}
       </div>

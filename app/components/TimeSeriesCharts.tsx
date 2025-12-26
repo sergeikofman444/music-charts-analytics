@@ -5,24 +5,37 @@ import {
   percentageOfSongs,
   numberOfSongs,
 } from "../../lib/utils";
-import { Box } from "@mui/material";
+import { Box, Slider, Typography } from "@mui/material";
 import { useChartNavigation } from "@/hooks";
+import React, { useState } from "react";
 
 export function TrackAgeTimeSeries({ chartAges, title }: TrackAgeProps) {
-  const chartDataWithDates = chartAges.map((item) => ({
+  const fullDataset = chartAges.map((item) => ({
     ...item,
     dateObject: new Date(item.chart_date_param.replace(/-/g, "/")),
   }));
+
+  const [range, setRange] = useState([0, 100]);
+
+  const startIndex = Math.floor((range[0] / 100) * (fullDataset.length - 1));
+  const endIndex = Math.floor((range[1] / 100) * (fullDataset.length - 1));
+
+  const visibleData = fullDataset.slice(
+    startIndex,
+    Math.max(endIndex + 1, startIndex + 2),
+  );
 
   const { navigateToDate } = useChartNavigation();
 
   return (
     <>
-      <div className="flex justify-center font-semibold dark:text-black text-center">{title}</div>
+      <div className="flex justify-center font-semibold dark:text-black text-center">
+        {title}
+      </div>
       <Box className="w-full flex justify-center">
         <LineChart
           className="w-full"
-          dataset={chartDataWithDates}
+          dataset={visibleData}
           xAxis={[
             {
               dataKey: "dateObject",
@@ -48,6 +61,32 @@ export function TrackAgeTimeSeries({ chartAges, title }: TrackAgeProps) {
           height={300}
         />
       </Box>
+      <Box sx={{ width: "90%", mt: 2, px: 2 }}>
+        <Typography
+          variant="caption"
+          color="text.secondary"
+          sx={{ display: "block", textAlign: "center", mb: 1 }}
+        >
+          {visibleData[0]?.dateObject.toLocaleDateString()} —{" "}
+          {visibleData[visibleData.length - 1]?.dateObject.toLocaleDateString()}
+        </Typography>
+        <Slider
+          value={range}
+          onChange={(e, newValue) => setRange(newValue as number[])}
+          valueLabelDisplay="auto"
+          // This formats the "bubble" while dragging
+          valueLabelFormat={(val) => {
+            const idx = Math.floor((val / 100) * (fullDataset.length - 1));
+            return fullDataset[idx]?.dateObject.toLocaleDateString("en-US", {
+              month: "short",
+              year: "2-digit",
+            });
+          }}
+          min={0}
+          max={100}
+          sx={{ color: "primary.main" }}
+        />
+      </Box>
     </>
   );
 }
@@ -65,6 +104,20 @@ export function NumberOfOldSongsTimeSeries({
   const labels = numberOfSongs.map((item) => item.chart_date);
   const { navigateToDate } = useChartNavigation();
 
+  const [range, setRange] = useState([0, 100]);
+
+  const startIndex = Math.floor((range[0] / 100) * numberOfSongs.length);
+  const endIndex = Math.floor((range[1] / 100) * numberOfSongs.length);
+
+  const visibleData = numberOfSongs.slice(
+    startIndex,
+    Math.max(endIndex, startIndex + 2),
+  );
+  const visibleLabels = labels.slice(
+    startIndex,
+    Math.max(endIndex, startIndex + 2),
+  );
+
   return (
     <>
       <div className="flex justify-center font-semibold dark:text-black text-center">
@@ -72,10 +125,10 @@ export function NumberOfOldSongsTimeSeries({
       </div>
       <Box className="w-full flex justify-center">
         <LineChart
-          dataset={dataset}
+          dataset={visibleData}
           xAxis={[
             {
-              data: labels,
+              data: visibleLabels,
               scaleType: "point",
             },
           ]}
@@ -104,6 +157,29 @@ export function NumberOfOldSongsTimeSeries({
           height={300}
         />
       </Box>
+      <Box sx={{ width: "90%" }}>
+        <Typography
+          variant="body2"
+          color="text.secondary"
+          align="center"
+          sx={{ mb: 1 }}
+        >
+          Viewing: <strong>{visibleLabels[0]}</strong> to{" "}
+          <strong>{visibleLabels[visibleLabels.length - 1]}</strong>
+        </Typography>
+        <Slider
+          value={range}
+          onChange={(e, newValue) => setRange(newValue as number[])}
+          valueLabelFormat={(value) => {
+            const index = Math.floor((value / 100) * (labels.length - 1));
+            return labels[index];
+          }}
+          valueLabelDisplay="auto"
+          min={0}
+          max={100}
+          sx={{ color: "primary.main" }}
+        />
+      </Box>
     </>
   );
 }
@@ -116,6 +192,20 @@ export function PercentageOfRecentSongs({
   const labels = percentageOfSongs.map((item) => item.chart_date);
   const { navigateToDate } = useChartNavigation();
 
+  const [range, setRange] = useState([68, 100]);
+
+  const startIndex = Math.floor((range[0] / 100) * percentageOfSongs.length);
+  const endIndex = Math.floor((range[1] / 100) * percentageOfSongs.length);
+
+  const visibleData = percentageOfSongs.slice(
+    startIndex,
+    Math.max(endIndex, startIndex + 2),
+  );
+  const visibleLabels = labels.slice(
+    startIndex,
+    Math.max(endIndex, startIndex + 2),
+  );
+
   return (
     <>
       <div className="flex justify-center font-semibold dark:text-black text-center">
@@ -123,10 +213,10 @@ export function PercentageOfRecentSongs({
       </div>
       <Box className="w-full flex justify-center">
         <LineChart
-          dataset={percentageOfSongs}
+          dataset={visibleData}
           xAxis={[
             {
-              data: labels,
+              data: visibleLabels,
               scaleType: "point",
             },
           ]}
@@ -149,6 +239,29 @@ export function PercentageOfRecentSongs({
           onAxisClick={(event, d) => navigateToDate(percentageOfSongs, d)}
           grid={{ horizontal: true }}
           height={300}
+        />
+      </Box>
+      <Box sx={{ width: "90%" }}>
+        <Typography
+          variant="body2"
+          color="text.secondary"
+          align="center"
+          sx={{ mb: 1 }}
+        >
+          Viewing: <strong>{visibleLabels[0]}</strong> to{" "}
+          <strong>{visibleLabels[visibleLabels.length - 1]}</strong>
+        </Typography>
+        <Slider
+          value={range}
+          onChange={(e, newValue) => setRange(newValue as number[])}
+          valueLabelFormat={(value) => {
+            const index = Math.floor((value / 100) * (labels.length - 1));
+            return labels[index];
+          }}
+          valueLabelDisplay="auto"
+          min={0}
+          max={100}
+          sx={{ color: "primary.main" }}
         />
       </Box>
     </>
