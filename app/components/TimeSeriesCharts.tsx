@@ -7,7 +7,7 @@ import {
 } from "../../lib/utils";
 import { Box, Slider, Typography } from "@mui/material";
 import { useChartNavigation } from "@/hooks";
-import React, { useState } from "react";
+import { useState } from "react";
 
 export function TrackAgeTimeSeries({ chartAges, title }: TrackAgeProps) {
   const fullDataset = chartAges.map((item) => ({
@@ -25,6 +25,8 @@ export function TrackAgeTimeSeries({ chartAges, title }: TrackAgeProps) {
     Math.max(endIndex + 1, startIndex + 2),
   );
 
+  const labels = chartAges.map((item) => item.chart_date);
+
   const { navigateToDate } = useChartNavigation();
 
   return (
@@ -40,10 +42,17 @@ export function TrackAgeTimeSeries({ chartAges, title }: TrackAgeProps) {
             {
               dataKey: "dateObject",
               scaleType: "time",
-              valueFormatter: (date) => {
-                return date.toLocaleDateString("en-US", {
+              valueFormatter: (date, context) => {
+                const d = date instanceof Date ? date : new Date(date);
+                if (context.location === "tooltip") {
+                  return d.toLocaleDateString("en-US", {
+                    month: "short",
+                    day: "numeric",
+                    year: "numeric",
+                  });
+                }
+                return d.toLocaleDateString("en-US", {
                   month: "short",
-                  day: "2-digit",
                   year: "numeric",
                 });
               },
@@ -63,24 +72,21 @@ export function TrackAgeTimeSeries({ chartAges, title }: TrackAgeProps) {
       </Box>
       <Box sx={{ width: "90%", mt: 2, px: 2 }}>
         <Typography
-          variant="caption"
+          variant="body2"
           color="text.secondary"
-          sx={{ display: "block", textAlign: "center", mb: 1 }}
+          align="center"
+          sx={{ mb: 1 }}
         >
-          {visibleData[0]?.dateObject.toLocaleDateString()} —{" "}
-          {visibleData[visibleData.length - 1]?.dateObject.toLocaleDateString()}
+          Viewing: <strong>{visibleData[0]?.chart_date}</strong> to{" "}
+          <strong>{visibleData[visibleData.length - 1]?.chart_date}</strong>
         </Typography>
         <Slider
           value={range}
           onChange={(e, newValue) => setRange(newValue as number[])}
           valueLabelDisplay="auto"
-          // This formats the "bubble" while dragging
-          valueLabelFormat={(val) => {
-            const idx = Math.floor((val / 100) * (fullDataset.length - 1));
-            return fullDataset[idx]?.dateObject.toLocaleDateString("en-US", {
-              month: "short",
-              year: "2-digit",
-            });
+          valueLabelFormat={(value) => {
+            const index = Math.floor((value / 100) * (labels.length - 1));
+            return labels[index];
           }}
           min={0}
           max={100}
@@ -102,21 +108,18 @@ export function NumberOfOldSongsTimeSeries({
   }));
 
   const labels = numberOfSongs.map((item) => item.chart_date);
-  const { navigateToDate } = useChartNavigation();
 
   const [range, setRange] = useState([0, 100]);
 
-  const startIndex = Math.floor((range[0] / 100) * numberOfSongs.length);
-  const endIndex = Math.floor((range[1] / 100) * numberOfSongs.length);
+  const startIndex = Math.floor((range[0] / 100) * dataset.length);
+  const endIndex = Math.floor((range[1] / 100) * dataset.length);
 
-  const visibleData = numberOfSongs.slice(
+  const visibleData = dataset.slice(
     startIndex,
     Math.max(endIndex, startIndex + 2),
   );
-  const visibleLabels = labels.slice(
-    startIndex,
-    Math.max(endIndex, startIndex + 2),
-  );
+
+  const { navigateToDate } = useChartNavigation();
 
   return (
     <>
@@ -128,8 +131,22 @@ export function NumberOfOldSongsTimeSeries({
           dataset={visibleData}
           xAxis={[
             {
-              data: visibleLabels,
-              scaleType: "point",
+              dataKey: "dateObject",
+              scaleType: "time",
+              valueFormatter: (date, context) => {
+                const d = date instanceof Date ? date : new Date(date);
+                if (context.location === "tooltip") {
+                  return d.toLocaleDateString("en-US", {
+                    month: "short",
+                    day: "numeric",
+                    year: "numeric",
+                  });
+                }
+                return d.toLocaleDateString("en-US", {
+                  month: "short",
+                  year: "numeric",
+                });
+              },
             },
           ]}
           series={[
@@ -164,15 +181,17 @@ export function NumberOfOldSongsTimeSeries({
           align="center"
           sx={{ mb: 1 }}
         >
-          Viewing: <strong>{visibleLabels[0]}</strong> to{" "}
-          <strong>{visibleLabels[visibleLabels.length - 1]}</strong>
+          Viewing: <strong>{visibleData[0]?.chart_date}</strong> to{" "}
+          <strong>{visibleData[visibleData.length - 1]?.chart_date}</strong>
         </Typography>
+
         <Slider
           value={range}
-          onChange={(e, newValue) => setRange(newValue as number[])}
+          onChange={(_, newValue) => setRange(newValue as number[])}
           valueLabelFormat={(value) => {
             const index = Math.floor((value / 100) * (labels.length - 1));
-            return labels[index];
+            const date = labels[index];
+            return date;
           }}
           valueLabelDisplay="auto"
           min={0}
@@ -189,6 +208,11 @@ export function PercentageOfRecentSongs({
 }: {
   percentageOfSongs: percentageOfSongs[];
 }) {
+  const dataset = percentageOfSongs.map((item) => ({
+    ...item,
+    dateObject: new Date(item.chart_date_param.replace(/-/g, "/")),
+  }));
+
   const labels = percentageOfSongs.map((item) => item.chart_date);
   const { navigateToDate } = useChartNavigation();
 
@@ -197,7 +221,7 @@ export function PercentageOfRecentSongs({
   const startIndex = Math.floor((range[0] / 100) * percentageOfSongs.length);
   const endIndex = Math.floor((range[1] / 100) * percentageOfSongs.length);
 
-  const visibleData = percentageOfSongs.slice(
+  const visibleData = dataset.slice(
     startIndex,
     Math.max(endIndex, startIndex + 2),
   );
@@ -216,8 +240,22 @@ export function PercentageOfRecentSongs({
           dataset={visibleData}
           xAxis={[
             {
-              data: visibleLabels,
-              scaleType: "point",
+              dataKey: "dateObject",
+              scaleType: "time",
+              valueFormatter: (date, context) => {
+                const d = date instanceof Date ? date : new Date(date);
+                if (context.location === "tooltip") {
+                  return d.toLocaleDateString("en-US", {
+                    month: "short",
+                    day: "numeric",
+                    year: "numeric",
+                  });
+                }
+                return d.toLocaleDateString("en-US", {
+                  month: "short",
+                  year: "numeric",
+                });
+              },
             },
           ]}
           series={[
