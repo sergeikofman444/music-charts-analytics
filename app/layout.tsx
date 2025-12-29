@@ -1,3 +1,4 @@
+import { Analytics } from "@vercel/analytics/next";
 import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
@@ -25,6 +26,7 @@ export default function RootLayout({
   return (
     <html lang="en" className={ztNature.className}>
       <body className={"antialiased"}>{children}</body>
+      <Analytics />
     </html>
   );
 }
