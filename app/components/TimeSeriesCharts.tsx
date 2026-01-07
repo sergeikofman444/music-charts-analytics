@@ -125,7 +125,7 @@ export function NumberOfOldSongsTimeSeries({
   return (
     <>
       <div className="flex justify-center font-semibold dark:text-black text-center">
-        Songs older than a given age
+        Songs older than a given age on Hot 100 Charts
       </div>
       <Box className="w-full flex justify-center">
         <LineChart
@@ -234,7 +234,7 @@ export function PercentageOfRecentSongs({
   return (
     <>
       <div className="flex justify-center font-semibold dark:text-black text-center">
-        Percentage of songs less than two weeks old
+        Percentage of songs less than two weeks old on Hot 100 Charts
       </div>
       <Box className="w-full flex justify-center">
         <LineChart
@@ -336,7 +336,7 @@ export function TypeOfArtist({
   return (
     <>
       <div className="flex justify-center font-semibold dark:text-black text-center">
-        Songs by individual vs group
+        Songs by individual vs group on Hot 100 Charts
       </div>
       <Box className="w-full flex justify-center">
         <LineChart
@@ -463,7 +463,7 @@ export function CountryOriginChart({
   return (
     <>
       <div className="flex justify-center font-semibold dark:text-black text-center">
-        Songs by country of origin
+        Songs by country of origin on Hot 100 Charts
       </div>
       <Box className="w-full flex justify-center">
         <LineChart

@@ -130,13 +130,13 @@ export default function ChartDashboard(props: ChartProps) {
         {visibleCharts.averageAge && mode === "track" && (
           <TrackAgeTimeSeries
             chartAges={averageAgesOverTime}
-            title="Average track age per chart instance"
+            title="Average track age per Hot 100 chart instance"
           />
         )}
         {visibleCharts.weightedAverageAge && mode === "track" && (
           <TrackAgeTimeSeries
             chartAges={weightedAveragesOverTime}
-            title="Weighted Average track age per chart instance"
+            title="Weighted Average track age per Hot 100 chart instance"
           />
         )}
         {visibleCharts.typeOfArtist && mode === "artist" && (
