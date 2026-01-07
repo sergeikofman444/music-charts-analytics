@@ -6,13 +6,15 @@ export function useChartNavigation() {
   const searchParams = useSearchParams();
 
   // Accept 'd' as it comes from MUI (which includes null)
-  const navigateToDate = (dataset: any[], d: any | null) => {
+  const navigateToDate = (d: any | null) => {
     // 1. Guard clause: Check if d exists and has a dataIndex
     if (!d || d.dataIndex === undefined || d.dataIndex === null) {
       return;
     }
 
-    const dateParam = dataset[d.dataIndex]?.chart_date_param;
+    const dateObj =
+      d.axisValue instanceof Date ? d.axisValue : new Date(d.axisValue);
+    const dateParam = dateObj.toISOString().split("T")[0];
 
     if (dateParam) {
       const params = new URLSearchParams(searchParams.toString());

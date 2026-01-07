@@ -4,6 +4,8 @@ import {
   numberOfSongs,
   percentageOfSongs,
   ChartEntry,
+  typeOfArtist,
+  countriesOnChart,
 } from "./utils";
 
 const isProduction = process.env.NODE_ENV === "production";
@@ -191,4 +193,59 @@ export async function percentageOfRecentSongs(): Promise<percentageOfSongs[]> {
   const result = await pool.query(query);
 
   return result.rows as percentageOfSongs[];
+}
+
+export async function typeOfArtistOverTime(): Promise<typeOfArtist[]> {
+  const query = `
+    SELECT
+        to_char(ce.chart_instance_id::date, 'Mon DD, YYYY') AS chart_date,
+        ce.chart_instance_id::text AS chart_date_param,
+        COUNT(DISTINCT ce.track_isrc) FILTER (WHERE a.artist_type IN ('Person', 'Character')) AS individual,
+        COUNT(DISTINCT ce.track_isrc) FILTER (WHERE a.artist_type NOT IN ('Person', 'Character') OR a.artist_type IS NULL) AS "group"
+    FROM
+        chart_entries ce
+    JOIN
+        tracks t ON ce.track_isrc = t.id
+    JOIN 
+        artist_tracks at ON t.id = at.track_isrc
+    JOIN
+        artists a ON at.artist_id = a.id
+    GROUP BY
+        ce.chart_instance_id
+    ORDER BY
+        ce.chart_instance_id ASC;
+    `;
+
+  const result = await pool.query(query);
+
+  return result.rows as typeOfArtist[];
+}
+
+export async function countriesRepresented(): Promise<countriesOnChart[]> {
+  const query = `
+    SELECT
+        to_char(ce.chart_instance_id::date, 'Mon DD, YYYY') AS chart_date,
+        ce.chart_instance_id::text AS chart_date_param,
+        a.country_of_origin AS country_code,
+        COUNT(DISTINCT ce.track_isrc) AS track_count
+    FROM
+        chart_entries ce
+    JOIN
+        tracks t ON ce.track_isrc = t.id
+    JOIN 
+        artist_tracks at ON t.id = at.track_isrc
+    JOIN
+        artists a ON at.artist_id = a.id
+    WHERE 
+        a.country_of_origin IN ('US', 'CA', 'GB', 'KR')
+    GROUP BY
+        ce.chart_instance_id, 
+        a.country_of_origin
+    ORDER BY
+        ce.chart_instance_id ASC;
+    `;
+
+  const result = await pool.query(query);
+
+  return result.rows as countriesOnChart[];
 }

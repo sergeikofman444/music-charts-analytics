@@ -5,6 +5,7 @@ DROP TABLE IF EXISTS tracks;
 DROP TABLE IF EXISTS artists;
 DROP TABLE IF EXISTS chart_instance;
 
+CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
 -- 1. chart_instance (The Chart Dates)
 CREATE TABLE chart_instance (
@@ -17,8 +18,13 @@ CREATE TABLE artists (
     name TEXT NOT NULL,
     
     -- NEW ENRICHED FIELDS
-    genres TEXT[] DEFAULT '{}', -- Array of strings (PostgreSQL native array type)
-    followers BIGINT           -- Used for high follower counts
+    followers BIGINT,           -- Used for high follower counts
+
+    -- Enriched fields from musicbrainz
+    musicbrainz_id UUID,
+    artist_type TEXT,
+    country_of_origin CHAR(2),
+    year_of_origin INTEGER
 );
 
 -- 3. tracks (The Track Master Data)
@@ -29,7 +35,7 @@ CREATE TABLE tracks (
     
     -- Enriched fields from the track enrichment step
     album TEXT,
-    release_date DATE
+    release_date DATE,
 );
 
 -- 4. artist_tracks (Many-to-Many Join)

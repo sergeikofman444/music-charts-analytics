@@ -8,6 +8,8 @@ import {
   numberOfOldSongs,
   percentageOfRecentSongs,
   getWeightedAgePerChart,
+  typeOfArtistOverTime,
+  countriesRepresented,
 } from "@/lib/db";
 import { dateOptions, numberOfSongs } from "@/lib/utils";
 import ChartDashboard from "./components/ChartDashboard";
@@ -32,12 +34,16 @@ export default async function Home({
 
   const rows = chartData;
 
-  const [avg, weighted, numOld, percent] = await Promise.all([
+  const [avg, weighted, numOld, percent, type, countries] = await Promise.all([
     getAverageAgePerChart(),
     getWeightedAgePerChart(),
     numberOfOldSongs(),
     percentageOfRecentSongs(),
+    typeOfArtistOverTime(),
+    countriesRepresented(),
   ]);
+
+  console.log(countries);
 
   const age = avg.find((row) => row.chart_date_param === selectedDate)?.age;
   const weightedAge = weighted.find(
@@ -75,6 +81,8 @@ export default async function Home({
               weightedAveragesOverTime={weighted}
               numberOfOldSongsOverTime={numOld}
               percentOfRecentSongs={percent}
+              typeOfArtistOverTime={type}
+              countriesOverTime={countries}
             />
           </div>
           <div

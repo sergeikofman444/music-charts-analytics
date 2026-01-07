@@ -40,11 +40,26 @@ export type percentageOfSongs = {
   moving_avg: number;
 };
 
+export type typeOfArtist = {
+  chart_date: string;
+  chart_date_param: string;
+  individual: number;
+  group: number;
+};
+
+export type countriesOnChart = {
+  chart_date: string;
+  chart_date_param: string;
+  [countryCode: string]: string | number | Date;
+};
+
 export interface ChartProps {
   averageAgesOverTime: chartAge[];
   weightedAveragesOverTime: chartAge[];
   numberOfOldSongsOverTime: numberOfSongs[];
   percentOfRecentSongs: percentageOfSongs[];
+  typeOfArtistOverTime: typeOfArtist[];
+  countriesOverTime: countriesOnChart[];
 }
 
 export interface ChartSummaryProps {
