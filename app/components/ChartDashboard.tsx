@@ -61,7 +61,7 @@ export default function ChartDashboard(props: ChartProps) {
     },
     {
       key: "countries",
-      label: "Countries of Artist origina",
+      label: "Countries of Artist origin",
       category: "artist",
     },
   ] as const;
@@ -76,24 +76,24 @@ export default function ChartDashboard(props: ChartProps) {
 
   return (
     <>
-      <div className="flex justify-center gap-4 border-b border-gray-200 mb-8">
+      <div className="flex justify-center mb-8">
         <button
           onClick={() => setMode("track")}
-          className={`pb-2 px-4 transition-colors ${
+          className={`pb-2 px-4 transition-colors border-b-2 ${
             mode === "track"
-              ? "border-b-2 border-gray-800 text-gray-800 font-bold"
-              : "text-gray-500 hover:text-gray-700"
-          }`}
+              ? " border-gray-700 text-gray-700 font-bold"
+              : "border-gray-200 text-gray-500 hover:text-gray-700"
+          } hover:scale-102`}
         >
           Track Analytics
         </button>
         <button
           onClick={() => setMode("artist")}
-          className={`pb-2 px-4 transition-colors ${
+          className={`pb-2 px-4 transition-colors border-b-2 ${
             mode === "artist"
-              ? "border-b-2 border-gray-800 text-gray-800 font-bold"
-              : "text-gray-500 hover:text-gray-700"
-          }`}
+              ? " border-gray-700 text-gray-700 font-bold"
+              : "border-gray-200 text-gray-500 hover:text-gray-700"
+          } hover:scale-102`}
         >
           Artist Analytics
         </button>

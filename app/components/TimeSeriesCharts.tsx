@@ -151,18 +151,18 @@ export function NumberOfOldSongsTimeSeries({
             },
           ]}
           series={[
-            // {
-            //   id: "1 Year",
-            //   label: "1 Year old",
-            //   dataKey: "one_yr",
-            //   showMark: false,
-            // },
-            // {
-            //   id: "2 Years",
-            //   label: "2 Years old",
-            //   dataKey: "two_yr",
-            //   showMark: false,
-            // },
+            {
+              id: "1 Year",
+              label: "1 Year old",
+              dataKey: "one_yr",
+              showMark: false,
+            },
+            {
+              id: "2 Years",
+              label: "2 Years old",
+              dataKey: "two_yr",
+              showMark: false,
+            },
             {
               id: "3 Years",
               label: "3 Years old",
