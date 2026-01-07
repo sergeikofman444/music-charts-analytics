@@ -35,7 +35,7 @@ CREATE TABLE tracks (
     
     -- Enriched fields from the track enrichment step
     album TEXT,
-    release_date DATE,
+    release_date DATE
 );
 
 -- 4. artist_tracks (Many-to-Many Join)

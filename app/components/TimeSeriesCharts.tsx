@@ -467,7 +467,7 @@ export function CountryOriginChart({
       </div>
       <Box className="w-full flex justify-center">
         <LineChart
-          dataset={dataset}
+          dataset={visibleData}
           xAxis={[
             {
               dataKey: "dateObject",
