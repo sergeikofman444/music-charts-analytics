@@ -1,6 +1,7 @@
 export const dynamic = "force-dynamic";
 
 import { GET as getTopPlaylist } from "./api/spotify/playlist/route";
+import Link from "next/link";
 import {
   getChartByDate,
   getChartDates,
@@ -146,10 +147,13 @@ export default async function Home({
                 the data visualization. You can find the code and read more
                 about the project here:{" "}
                 <a href="https://github.com/sergeikofman444/music-charts-analytics">
+                  {" "}
                   https://github.com/sergeikofman444/music-charts-analytics
                 </a>
               </div>
-              <div className="mt-8 text-sm">Sergei Kofman // Measure</div>
+              <div className="mt-8 text-sm">
+                <a href="https://sergeikofman.ca">Sergei Kofman // Measure</a>
+              </div>
             </div>
           </div>
         </div>
